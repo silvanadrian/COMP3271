@@ -1,1 +1,1 @@
-# COMP3721 Computer Graphics
+# COMP3271 Computer Graphics
