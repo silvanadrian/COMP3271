@@ -1,0 +1,190 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resrc1.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "resource.h"
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDM_MAINMENU MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Open",                       ID_OPEN
+        MENUITEM "&Save",                       ID_SAVE
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Color Map",                  ID_COLORMAP
+        MENUITEM "&Key Color Map",              ID_KEY_COLOR_MAP
+        MENUITEM "&Information",                ID_INFORMATION
+        MENUITEM SEPARATOR
+        MENUITEM "&Zoom Out",                   ID_ZOOMOUT
+        MENUITEM "Zoom &Top Level",             ID_ZOOMTOP
+        MENUITEM "Correct &Aspect Ratio",       ID_ASPECT_RATIO
+    END
+    POPUP "&Tools"
+    BEGIN
+        MENUITEM "&Remove Key Color",           ID_REMOVE_KEYCOLOR
+        MENUITEM "&Clear All Colors",           ID_CLEAR_COLOR
+        MENUITEM SEPARATOR
+        MENUITEM "&Default Color Map",          ID_STD_COLOR
+        MENUITEM "&Import Color Map",           ID_IMPORT_COLOR
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About",                      ID_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_MAIN                ICON                    "Fractals.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT DIALOGEX 0, 0, 208, 186
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About"
+FONT 9, "MS Sans Serif", 400, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,153,7,48,12
+    LTEXT           "Fractals v1.5.2\nC0271 Homepage\nwww.i.cs.hku.hk/~c0271",IDC_STATIC,35,7,105,25
+    LTEXT           "Prepared by\nThe Computer Graphics Group 1998-2007\nwww.cs.hku.hk/GraphicsGroup/",IDC_STATIC,35,149,136,29
+    LTEXT           "Department of Computer Science\nThe University of Hong Kong",IDC_STATIC,35,75,128,26
+    ICON            IDI_MAIN,IDC_STATIC,7,7,20,20
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDFRAME,29,39,172,140
+    LTEXT           "This is a Microsoft Visual NET 2005 template for assignment 1 of the course C0271 Computer Graphics.",IDC_STATIC,35,44,142,27
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 201
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 179
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resrc1.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""resource.h""\r\n"
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,5,0,1
+ PRODUCTVERSION 1,5,0,1
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "FileDescription", "Fractals"
+            VALUE "FileVersion", "1, 5, 0, 1"
+            VALUE "InternalName", "Fractals"
+            VALUE "LegalCopyright", "Copyright (C) 2003"
+            VALUE "OriginalFilename", "Fractals.exe"
+            VALUE "ProductName", " Fractals Application"
+            VALUE "ProductVersion", "1, 5, 0, 1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

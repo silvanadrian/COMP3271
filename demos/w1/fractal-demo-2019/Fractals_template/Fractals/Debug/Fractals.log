@@ -1,0 +1,19 @@
+﻿  cl : Command line warning D9035 : option 'Gm' has been deprecated and will be removed in a future release
+  Fractals.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+  Code.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+D:\Download\fractal-demo-2018\Fractals_template\Fractals\Code.cpp(35,15): warning C4101:  'a': unreferenced local variable
+D:\Download\fractal-demo-2018\Fractals_template\Fractals\Code.cpp(35,23): warning C4101:  'b': unreferenced local variable
+D:\Download\fractal-demo-2018\Fractals_template\Fractals\Code.cpp(35,29): warning C4101:  'temp_x': unreferenced local variable
+D:\Download\fractal-demo-2018\Fractals_template\Fractals\Code.cpp(34,12): warning C4101:  'co': unreferenced local variable
+D:\Download\fractal-demo-2018\Fractals_template\Fractals\Code.cpp(35,20): warning C4101:  'ib': unreferenced local variable
+D:\Download\fractal-demo-2018\Fractals_template\Fractals\Code.cpp(35,12): warning C4101:  'ia': unreferenced local variable
+D:\Download\fractal-demo-2018\Fractals_template\Fractals\Code.cpp(69,23): warning C4101:  'y': unreferenced local variable
+D:\Download\fractal-demo-2018\Fractals_template\Fractals\Code.cpp(69,14): warning C4101:  'f': unreferenced local variable
+D:\Download\fractal-demo-2018\Fractals_template\Fractals\Code.cpp(69,25): warning C4101:  'temp_x': unreferenced local variable
+D:\Download\fractal-demo-2018\Fractals_template\Fractals\Code.cpp(68,12): warning C4101:  'co': unreferenced local variable
+D:\Download\fractal-demo-2018\Fractals_template\Fractals\Code.cpp(69,21): warning C4101:  'x': unreferenced local variable
+  Generating Code...
+D:\Download\fractal-demo-2018\Fractals_template\Fractals\Code.cpp(69,19): warning C4101:  'g': unreferenced local variable
+  Fractals.vcxproj -> D:\Download\fractal-demo-2018\Fractals_template\Debug\Fractals.exe
