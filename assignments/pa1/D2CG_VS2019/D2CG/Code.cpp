@@ -8,11 +8,10 @@
 #include "D2CG.h"
 
 
-
 //////////////////////////////////////////////////////
 ////////////
 //The Global Variables To Be Used
-
+int interaction_count = 0;
 
 //list of triangles, each element is of type Triangle
 //to access the kth triangle, just use triangles[k]
@@ -76,6 +75,15 @@ void DrawTriangles() {
 
 	//TO DO: Add code to draw triangles here. Use triangles.size() to get number of triangles.
 	//Use triangles[i] to get the ith triangle.
+	int size = triangles.size();
+	for (int count = 0; count < size;count++) {
+		glColor3f(color_array[count][0], color_array[count][1], color_array[count][2]);
+		glBegin(GL_TRIANGLES);
+		glVertex2d(triangles[count].vertices[0][0], triangles[count].vertices[0][1]);
+		glVertex2d(triangles[count].vertices[1][0], triangles[count].vertices[1][1]);
+		glVertex2d(triangles[count].vertices[2][0], triangles[count].vertices[2][1]);
+		glEnd();
+	}
 }
 
 
@@ -123,6 +131,13 @@ void MouseInteraction(GLdouble m_x, GLdouble m_y) {
 	//	by invoking AffineMatricesCalculation().
 	// Store both the points and matrix of the triangle into a new element of the list 'triangles'
 	//
+	triangle_to_draw.vertices[point_count][0] = m_x;
+	triangle_to_draw.vertices[point_count][1] = m_y;
+	point_count += 1;
+	if (point_count > 2) {
+		triangles.push_back(triangle_to_draw);
+		point_count = 0;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
