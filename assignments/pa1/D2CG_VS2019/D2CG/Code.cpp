@@ -11,7 +11,6 @@
 //////////////////////////////////////////////////////
 ////////////
 //The Global Variables To Be Used
-int interaction_count = 0;
 
 //list of triangles, each element is of type Triangle
 //to access the kth triangle, just use triangles[k]
@@ -72,13 +71,17 @@ void DrawTriangles() {
 		glVertex2d(triangle_to_draw.vertices[i][0], triangle_to_draw.vertices[i][1]);
 	glEnd();
 
-
 	//TO DO: Add code to draw triangles here. Use triangles.size() to get number of triangles.
 	//Use triangles[i] to get the ith triangle.
 	int size = triangles.size();
+	if (size > 0) {
+		AffineMatricesCalculation(triangles[0].vertices, triangle_to_draw.vertices, triangle_to_draw.matrix);
+	}
 	for (int count = 0; count < size;count++) {
+		AffineMatricesCalculation(triangles[0].vertices, triangles[count].vertices, triangles[count].matrix);
 		glColor3f(color_array[count][0], color_array[count][1], color_array[count][2]);
 		glBegin(GL_TRIANGLES);
+		Triangle t = triangles[count];
 		glVertex2d(triangles[count].vertices[0][0], triangles[count].vertices[0][1]);
 		glVertex2d(triangles[count].vertices[1][0], triangles[count].vertices[1][1]);
 		glVertex2d(triangles[count].vertices[2][0], triangles[count].vertices[2][1]);
@@ -117,6 +120,42 @@ void RecursiveFractal(int k) {
 	//The fields of struct Triangle include:
 	//	GLdouble vertices[3][2];
 	//	GLdouble matrix[3][3];	
+	glMatrixMode(GL_MODELVIEW);
+	int size = triangles.size();
+	if (k > 0) {
+		for (int count = 0; count < size;count++) {
+			glPushMatrix();
+			Triangle tri = triangles[count];
+			GLdouble m[16] = {
+			0, 0, 0, 0,
+			0, 0, 0, 0,
+			0, 0, 0, 0,
+			0, 0, 0, 0 };
+
+			m[0] = tri.matrix[0][0];
+			m[1] = tri.matrix[1][0];
+			m[3] = tri.matrix[2][0];
+
+			m[4] = tri.matrix[0][1];
+			m[5] = tri.matrix[1][1];
+			m[7] = tri.matrix[2][1];
+
+			m[12] = tri.matrix[0][2];
+			m[13] = tri.matrix[1][2];
+			m[15] = tri.matrix[2][2];
+			glMultMatrixd(m);
+			RecursiveFractal(k - 1);
+			glPopMatrix();
+		}
+	}
+	else {
+		glBegin(GL_TRIANGLES);
+		Triangle t = triangles[0];
+		glVertex2d(triangles[0].vertices[0][0], triangles[0].vertices[0][1]);
+		glVertex2d(triangles[0].vertices[1][0], triangles[0].vertices[1][1]);
+		glVertex2d(triangles[0].vertices[2][0], triangles[0].vertices[2][1]);
+		glEnd();
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -155,6 +194,49 @@ void AffineMatricesCalculation(GLdouble v_original[][2], GLdouble v_transformed[
 	//		 Base the computation on the formula M = T'T^(-1), where T' is the 3x3 matrix with each column the homogeneous coordinates of transformed triangle's vertex
 	//		 and T is 3x3 matrix orginazed in a similar manner but stores data of the original triangle.
 	//		 If you do not want to calculate the inverse of T yourself, we provide a tool function InverseMatrix(). This function could compute the inverse of T.
+
+	GLdouble T[3][3];
+	// Assign the vectors to matrix
+	T[0][0] = v_original[0][0];
+	T[0][1] = v_original[0][2];
+	T[0][2] = v_original[0][3];
+
+	T[1][0] = v_original[1][0];
+	T[1][1] = v_original[1][1];
+	T[1][2] = v_original[1][2];
+	T[2][0] = 1;
+	T[2][1] = 1;
+	T[2][2] = 1;
+
+	GLdouble T2[3][3];
+	T2[0][0] = v_transformed[0][0];
+	T2[0][1] = v_transformed[0][2];
+	T2[0][2] = v_transformed[0][3];
+
+	T2[1][0] = v_transformed[1][0];
+	T2[1][1] = v_transformed[1][1];
+	T2[1][2] = v_transformed[1][2];
+
+	T2[2][0] = 1;
+	T2[2][1] = 1;
+	T2[2][2] = 1;
+
+	GLdouble TInv[3][3];
+	InverseMatrix(T2, TInv);
+
+	// Matrix calculation
+	for (int i = 0; i < 3; i++)
+	{
+		for (int k = 0; k < 3; k++)
+		{
+			matrix[i][k] = 0;
+
+			for (int t = 0; t < 3; t++)
+				matrix[i][k] += T[i][t] * TInv[t][k];
+		}
+	}
+
+	// matrix = T * T2
 
 }
 
