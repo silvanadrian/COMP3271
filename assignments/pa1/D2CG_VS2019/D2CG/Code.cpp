@@ -74,14 +74,10 @@ void DrawTriangles() {
 	//TO DO: Add code to draw triangles here. Use triangles.size() to get number of triangles.
 	//Use triangles[i] to get the ith triangle.
 	int size = triangles.size();
-	if (size > 0) {
-		AffineMatricesCalculation(triangles[0].vertices, triangle_to_draw.vertices, triangle_to_draw.matrix);
-	}
 	for (int count = 0; count < size;count++) {
 		AffineMatricesCalculation(triangles[0].vertices, triangles[count].vertices, triangles[count].matrix);
 		glColor3f(color_array[count][0], color_array[count][1], color_array[count][2]);
 		glBegin(GL_TRIANGLES);
-		Triangle t = triangles[count];
 		glVertex2d(triangles[count].vertices[0][0], triangles[count].vertices[0][1]);
 		glVertex2d(triangles[count].vertices[1][0], triangles[count].vertices[1][1]);
 		glVertex2d(triangles[count].vertices[2][0], triangles[count].vertices[2][1]);
@@ -129,20 +125,16 @@ void RecursiveFractal(int k) {
 			GLdouble m[16] = {
 			0, 0, 0, 0,
 			0, 0, 0, 0,
-			0, 0, 0, 0,
-			0, 0, 0, 0 };
+			0, 0, 1, 0,
+			0, 0, 0, 1 };
 
 			m[0] = tri.matrix[0][0];
 			m[1] = tri.matrix[1][0];
-			m[3] = tri.matrix[2][0];
-
 			m[4] = tri.matrix[0][1];
 			m[5] = tri.matrix[1][1];
-			m[7] = tri.matrix[2][1];
-
+			
 			m[12] = tri.matrix[0][2];
 			m[13] = tri.matrix[1][2];
-			m[15] = tri.matrix[2][2];
 			glMultMatrixd(m);
 			RecursiveFractal(k - 1);
 			glPopMatrix();
@@ -150,7 +142,6 @@ void RecursiveFractal(int k) {
 	}
 	else {
 		glBegin(GL_TRIANGLES);
-		Triangle t = triangles[0];
 		glVertex2d(triangles[0].vertices[0][0], triangles[0].vertices[0][1]);
 		glVertex2d(triangles[0].vertices[1][0], triangles[0].vertices[1][1]);
 		glVertex2d(triangles[0].vertices[2][0], triangles[0].vertices[2][1]);
@@ -204,9 +195,7 @@ void AffineMatricesCalculation(GLdouble v_original[][2], GLdouble v_transformed[
 	T[1][0] = v_original[1][0];
 	T[1][1] = v_original[1][1];
 	T[1][2] = v_original[1][2];
-	T[2][0] = 1;
-	T[2][1] = 1;
-	T[2][2] = 1;
+	T[2][0] = T[2][1] = T[2][2] = 1;
 
 	GLdouble T2[3][3];
 	T2[0][0] = v_transformed[0][0];
@@ -217,9 +206,7 @@ void AffineMatricesCalculation(GLdouble v_original[][2], GLdouble v_transformed[
 	T2[1][1] = v_transformed[1][1];
 	T2[1][2] = v_transformed[1][2];
 
-	T2[2][0] = 1;
-	T2[2][1] = 1;
-	T2[2][2] = 1;
+	T2[2][0] = T2[2][1] = T2[2][2] = 1;
 
 	GLdouble TInv[3][3];
 	InverseMatrix(T2, TInv);
