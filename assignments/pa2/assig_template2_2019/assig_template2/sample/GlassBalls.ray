@@ -1,0 +1,70 @@
+RAY150
+2.37846 4.04631 4.49387 	// view point
+-0.107683 -0.275815 -0.95516 	// line of sight
+-0.23029 -0.927696 0.293848 	// head up vector
+-0.967146 0.251606 0.0363799 	// right hand vector
+40	//
+2 	// number of light sources
+-14.8073 -9.88907 21.4904 	// light source position
+1 1 1 	// light source color
+1 	// light source status
+14.2238 10.6605 19.8471 	// light source position
+1 1 1 	// light source color
+1 	// light source status
+5 	// number of objects
+2 	// type
+10.5323 0 0 0 0 6.8059 0 0 0 0 0.119249 0 4.1651 2.60453 -3.36916 1  	// transform M
+0 0 0 	// ambient
+1 0.72549 0.592157 	// diffuse
+1 1 1 	// specular
+100 	// shininess
+1 	// refractive index
+0.5 	// reflectance
+1 	// opacity
+wood1.jpg
+
+4 	// type
+1 0 0 0 0 1 0 0 0 0 1 0 2.65939 1.25321 -2.15264 1  	// transform M
+0 0 0 	// ambient
+0 0 0 	// diffuse
+1 1 1 	// specular
+128 	// shininess
+1.5 	// refractive index
+1 	// reflectance
+0 	// opacity
+
+
+4 	// type
+1 0 0 0 0 1 0 0 0 0 1 0 1.65326 2.03399 -0.606981 1  	// transform M
+0 0 0 	// ambient
+0 0 0 	// diffuse
+1 1 1 	// specular
+128 	// shininess
+1.5 	// refractive index
+1 	// reflectance
+0 	// opacity
+
+
+4 	// type
+1 0 0 0 0 1 0 0 0 0 1 0 1.71187 3.15843 -2.15264 1  	// transform M
+0 0 0 	// ambient
+0 0 0 	// diffuse
+1 1 1 	// specular
+128 	// shininess
+1.5 	// refractive index
+1 	// reflectance
+0 	// opacity
+
+
+4 	// type
+1 0 0 0 0 1 0 0 0 0 1 0 0.761019 1.25321 -2.15264 1  	// transform M
+0 0 0 	// ambient
+0 0 0 	// diffuse
+1 1 1 	// specular
+128 	// shininess
+1.5 	// refractive index
+1 	// reflectance
+0 	// opacity
+
+
+RAY150_EOF
