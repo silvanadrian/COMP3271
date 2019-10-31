@@ -244,8 +244,40 @@ void CRayView::UserMouseMove(int x, int y)
 		if (m_bRotateObj==TRUE){
 			/////////////////////////////////////////
 			//add your codes here for rotating object
-			
 
+			hv = (m_viewinfo.lrp - m_viewinfo.llp) / (float)m_nWidth;
+			vv = (m_viewinfo.ulp - m_viewinfo.llp) / (float)m_nHeight;
+
+			sp = m_viewinfo.llp + hv * (float)m_nSx + vv * (float)m_nSy;
+			cp = m_viewinfo.llp + hv * (float)m_nCx + vv * (float)m_nCy;
+
+			mm = cp - sp;
+
+			ra = mm.cross(pDoc->m_camera.los);
+			ra.normalize();
+			rmag = mm.length();
+
+			glPushMatrix();
+			glLoadIdentity();
+			glRotatef(rmag * 1000.0f, ra[0], ra[1], ra[2]);
+			glGetFloatv(GL_MODELVIEW_MATRIX, rmat);
+			glPopMatrix();
+
+			for (i = 0;i < 16;i++) tmat[i] = .0f;
+			tmat[0] = tmat[5] = tmat[10] = tmat[15] = 1.0f;
+
+			for (list<LPPRIMITIVE>::iterator oi = pDoc->m_selectedobjects.begin(); oi != pDoc->m_selectedobjects.end(); oi++) {
+				(*oi)->RestoreM();
+				tmat[12] = -(rotcenter[0]);
+				tmat[13] = -(rotcenter[1]);
+				tmat[14] = -(rotcenter[2]);
+				(*oi)->MultM(tmat);
+				(*oi)->MultM(rmat);
+				tmat[12] = (rotcenter[0]);
+				tmat[13] = (rotcenter[1]);
+				tmat[14] = (rotcenter[2]);
+				(*oi)->MultM(tmat);
+			}
 			
 			////////////////////////////////
 			pDoc->GenerateBigBoundingBox();
@@ -259,7 +291,50 @@ void CRayView::UserMouseMove(int x, int y)
 				//add your codes here for object translation
 
 				
+				hv = (m_viewinfo.lrp - m_viewinfo.llp) / (float)m_nWidth;
+				vv = (m_viewinfo.ulp - m_viewinfo.llp) / (float)m_nHeight;
 
+				sp = m_viewinfo.llp + hv * (float)m_nSx + vv * (float)m_nSy;
+				cp = m_viewinfo.llp + hv * (float)m_nCx + vv * (float)m_nCy;
+
+				tmpv1 = cp - pDoc->m_camera.viewpoint;
+				tmpv1.normalize();
+
+				tmpv2 = sp - pDoc->m_camera.viewpoint;
+				tmpv2.normalize();
+
+				mm = m2 - m1;
+				mm.normalize();
+
+				p1 = mm.cross(tmpv1);
+				p2 = tmpv1.cross(p1);
+				p2.normalize();
+
+				dp2 = p2.dot(pDoc->m_camera.viewpoint);
+
+				t2 = (dp2 - p2[0] * m1[0] - p2[1] * m1[1] - p2[2] * m1[2]) / (p2[0] * mm[0] + p2[1] * mm[1] + p2[2] * mm[2]);
+				int2 = m1 + t2 * mm;
+
+				p2 = mm.cross(tmpv2);
+				p1 = tmpv2.cross(p2);
+				p1.normalize();
+
+				dp1 = p1.dot(pDoc->m_camera.viewpoint);
+
+				t1 = (dp1 - p1[0] * m1[0] - p1[1] * m1[1] - p1[2] * m1[2]) / (p1[0] * mm[0] + p1[1] * mm[1] + p1[2] * mm[2]);
+				int1 = m1 + t1 * mm;
+
+				for (i = 0;i < 16;i++) tmat[i] = .0f;
+				tmat[0] = tmat[5] = tmat[10] = tmat[15] = 1.0f;
+
+				tmat[12] = int2[0] - int1[0];
+				tmat[13] = int2[1] - int1[1];
+				tmat[14] = int2[2] - int1[2];
+
+				for (list<LPPRIMITIVE>::iterator oi = pDoc->m_selectedobjects.begin(); oi != pDoc->m_selectedobjects.end(); oi++) {
+					(*oi)->RestoreM();
+					(*oi)->MultM(tmat);
+				}
 
 
 
@@ -282,7 +357,74 @@ void CRayView::UserMouseMove(int x, int y)
 				//add your codes here for object scaling
 				
 
+				hv = (m_viewinfo.lrp - m_viewinfo.llp) / (float)m_nWidth;
+				vv = (m_viewinfo.ulp - m_viewinfo.llp) / (float)m_nHeight;
 
+				sp = m_viewinfo.llp + hv * (float)m_nSx + vv * (float)m_nSy;
+				cp = m_viewinfo.llp + hv * (float)m_nCx + vv * (float)m_nCy;
+
+				tmpv1 = cp - pDoc->m_camera.viewpoint;
+				tmpv1.normalize();
+
+				tmpv2 = sp - pDoc->m_camera.viewpoint;
+				tmpv2.normalize();
+
+				mm = m2 - m1;
+				dist1 = mm.length();
+				mm.normalize();
+
+				p1 = mm.cross(tmpv1);
+				p2 = tmpv1.cross(p1);
+				p2.normalize();
+
+				dp2 = p2.dot(pDoc->m_camera.viewpoint);
+
+				t2 = (dp2 - p2[0] * m1[0] - p2[1] * m1[1] - p2[2] * m1[2]) / (p2[0] * mm[0] + p2[1] * mm[1] + p2[2] * mm[2]);
+				int2 = m1 + t2 * mm;
+
+
+				p2 = mm.cross(tmpv2);
+				p1 = tmpv2.cross(p2);
+				p1.normalize();
+
+				dp1 = p1.dot(pDoc->m_camera.viewpoint);
+
+				t1 = (dp1 - p1[0] * m1[0] - p1[1] * m1[1] - p1[2] * m1[2]) / (p1[0] * mm[0] + p1[1] * mm[1] + p1[2] * mm[2]);
+				int1 = m1 + t1 * mm;
+
+				tmpv1 = m2 - m1 + int2 - int1;
+				dist2 = tmpv1.length();
+
+				for (list<LPPRIMITIVE>::iterator oi = pDoc->m_selectedobjects.begin(); oi != pDoc->m_selectedobjects.end(); oi++) {
+					(*oi)->RestoreM();
+					for (j = 0;j < 16;j++) tsmat[j] = .0f;
+
+					tsmat[0] = tsmat[5] = tsmat[10] = tsmat[15] = 1.0f;
+					tsmat[12] = -(m1[0]);
+					tsmat[13] = -(m1[1]);
+					tsmat[14] = -(m1[2]);
+
+					for (j = 0;j < 16;j++) rsmat[j] = .0f;
+
+					rsmat[0] = rsmat[5] = rsmat[10] = rsmat[15] = 1.0f;
+					switch (scaleDir) {
+					case 0:
+						rsmat[5] = dist2 / dist1;
+						break;
+					case 1:
+						rsmat[10] = dist2 / dist1;
+						break;
+					case 2:
+						rsmat[0] = dist2 / dist1;
+						break;
+					}
+					(*oi)->MultM(tsmat);
+					(*oi)->MultM(rsmat);
+					tsmat[12] = (m1[0]);
+					tsmat[13] = (m1[1]);
+					tsmat[14] = (m1[2]);
+					(*oi)->MultM(tsmat);
+				}
 
 
 
@@ -310,9 +452,49 @@ void CRayView::UserDrawControlHandle(V3 origin, V3 x_axis, V3 y_axis, V3 z_axis)
 {
 				////////////////////////////////////////
 				//add your codes here for drawing a handle.
+
+		//point3f center_p(origin[0], origin[1], origin[2]);
+		//vect3f x_axis_vect(x_axis[0], x_axis[1], x_axis[2]);
+		//vect3f y_axis_vect(y_axis[0], y_axis[1], y_axis[2]);
+		//vect3f z_axis_vect(z_axis[0], z_axis[1], z_axis[2]);
 				
+		// PUT YOUR SOLUTION HERE	
+		glPushMatrix();
+		glBegin(GL_TRIANGLES);
 
+		//V3 p1 = { origin[0] + (2 * x_axis)[0], origin[0] + (2 * x_axis)[0], origin[0] + (2 * x_axis)[0] }
+		// point3f p1(center_p.x_ + (2 * local_z_axis).dx_, center_p.x_ + (2 * local_z_axis).dx_, center_p.x_ + (2 * local_z_axis).dx_);
+		//point3f p2(center_p.x_ + (2 * local_z_axis).dx_, center_p.x_ + (2 * local_z_axis).dx_, center_p.x_ + (2 * local_z_axis).dx_);
+		//point3f p3(center_p.x_ + (2 * local_z_axis).dx_, center_p.x_ + (2 * local_z_axis).dx_, center_p.x_ + (2 * local_z_axis).dx_);
+		//point3f p4(center_p.x_ + (2 * local_z_axis).dx_, center_p.x_ + (2 * local_z_axis).dx_, center_p.x_ + (2 * local_z_axis).dx_);
+		//point3f p5(center_p.x_ + (2 * local_z_axis).dx_, center_p.x_ + (2 * local_z_axis).dx_, center_p.x_ + (2 * local_z_axis).dx_);
 
+		glVertex3f(origin[0] + (2 * x_axis)[0], origin[0] + (2 * x_axis)[0], origin[0] + (2 * x_axis)[0]);
+		glVertex3f(origin[0] + (2 * z_axis)[0], origin[0] + (2 * z_axis)[0], origin[0] + (2 * z_axis)[0]);
+		glVertex3f(origin[0] + (2 * z_axis)[0], origin[0] + (2 * z_axis)[0], origin[0] + (2 * z_axis)[0]);
+
+		//glVertex3f(p1);
+		//glVertex3f(p2);
+		//glVertex3f(p5);
+
+		//glVertex3f(p1);
+		//glVertex3f(p4);
+		//glVertex3f(p5);
+
+		//glVertex3f(p1);
+		//glVertex3f(p3);
+		//glVertex3f(p4);
+		glEnd();
+
+		//glBegin(GL_QUADS);
+
+		//glVertex3f(p2);
+		//glVertex3f(p3);
+		//glVertex3f(p4);
+		//glVertex3f(p5);
+		//glEnd();
+
+		glPopMatrix();
 
 
 
