@@ -324,8 +324,9 @@ void CRayView::UserMouseMove(int x, int y)
 				t1 = (dp1 - p1[0] * m1[0] - p1[1] * m1[1] - p1[2] * m1[2]) / (p1[0] * mm[0] + p1[1] * mm[1] + p1[2] * mm[2]);
 				int1 = m1 + t1 * mm;
 
-				for (i = 0;i < 16;i++) tmat[i] = .0f;
-				tmat[0] = tmat[5] = tmat[10] = tmat[15] = 1.0f;
+				for (i = 0;i < 16;i++) tmat[i] = 0.0;
+				// set up translation Matrix with 0 and 1s
+				tmat[0] = tmat[5] = tmat[10] = tmat[15] = 1.0;
 
 				tmat[12] = int2[0] - int1[0];
 				tmat[13] = int2[1] - int1[1];
@@ -335,8 +336,6 @@ void CRayView::UserMouseMove(int x, int y)
 					(*oi)->RestoreM();
 					(*oi)->MultM(tmat);
 				}
-
-
 
 				////////////////////////////////////////////
 				pDoc->GenerateBigBoundingBox();
