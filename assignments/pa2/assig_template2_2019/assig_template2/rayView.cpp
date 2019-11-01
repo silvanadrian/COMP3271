@@ -259,24 +259,24 @@ void CRayView::UserMouseMove(int x, int y)
 
 			glPushMatrix();
 			glLoadIdentity();
-			glRotatef(rmag * 1000.0f, ra[0], ra[1], ra[2]);
+			glRotatef(rmag*1000.0f, ra[0], ra[1], ra[2]);
 			glGetFloatv(GL_MODELVIEW_MATRIX, rmat);
 			glPopMatrix();
 
 			for (i = 0;i < 16;i++) tmat[i] = .0f;
 			tmat[0] = tmat[5] = tmat[10] = tmat[15] = 1.0f;
 
-			for (list<LPPRIMITIVE>::iterator oi = pDoc->m_selectedobjects.begin(); oi != pDoc->m_selectedobjects.end(); oi++) {
-				(*oi)->RestoreM();
+			for (list<LPPRIMITIVE>::iterator it = pDoc->m_selectedobjects.begin(); it != pDoc->m_selectedobjects.end(); it++) {
+				(*it)->RestoreM();
 				tmat[12] = -(rotcenter[0]);
 				tmat[13] = -(rotcenter[1]);
 				tmat[14] = -(rotcenter[2]);
-				(*oi)->MultM(tmat);
-				(*oi)->MultM(rmat);
+				(*it)->MultM(tmat);
+				(*it)->MultM(rmat);
 				tmat[12] = (rotcenter[0]);
 				tmat[13] = (rotcenter[1]);
 				tmat[14] = (rotcenter[2]);
-				(*oi)->MultM(tmat);
+				(*it)->MultM(tmat);
 			}
 			
 			////////////////////////////////
@@ -338,8 +338,6 @@ void CRayView::UserMouseMove(int x, int y)
 
 
 
-
-
 				////////////////////////////////////////////
 				pDoc->GenerateBigBoundingBox();
 				pDoc->SetModifiedFlag(TRUE);
@@ -395,8 +393,8 @@ void CRayView::UserMouseMove(int x, int y)
 				tmpv1 = m2 - m1 + int2 - int1;
 				dist2 = tmpv1.length();
 
-				for (list<LPPRIMITIVE>::iterator oi = pDoc->m_selectedobjects.begin(); oi != pDoc->m_selectedobjects.end(); oi++) {
-					(*oi)->RestoreM();
+				for (list<LPPRIMITIVE>::iterator it = pDoc->m_selectedobjects.begin(); it != pDoc->m_selectedobjects.end(); it++) {
+					(*it)->RestoreM();
 					for (j = 0;j < 16;j++) tsmat[j] = .0f;
 
 					tsmat[0] = tsmat[5] = tsmat[10] = tsmat[15] = 1.0f;
@@ -407,23 +405,27 @@ void CRayView::UserMouseMove(int x, int y)
 					for (j = 0;j < 16;j++) rsmat[j] = .0f;
 
 					rsmat[0] = rsmat[5] = rsmat[10] = rsmat[15] = 1.0f;
+					// switch scaleing direction
 					switch (scaleDir) {
 					case 0:
+						// if scaleDir = 0, set 5 element to sValue
 						rsmat[5] = dist2 / dist1;
 						break;
 					case 1:
+						// if scaleDir = 1, set 10 element to sValue
 						rsmat[10] = dist2 / dist1;
 						break;
 					case 2:
+						// if scaleDir = , set 10 element to sValue
 						rsmat[0] = dist2 / dist1;
 						break;
 					}
-					(*oi)->MultM(tsmat);
-					(*oi)->MultM(rsmat);
+					(*it)->MultM(tsmat);
+					(*it)->MultM(rsmat);
 					tsmat[12] = (m1[0]);
 					tsmat[13] = (m1[1]);
 					tsmat[14] = (m1[2]);
-					(*oi)->MultM(tsmat);
+					(*it)->MultM(tsmat);
 				}
 
 
@@ -450,56 +452,39 @@ void CRayView::UserMouseMove(int x, int y)
 
 void CRayView::UserDrawControlHandle(V3 origin, V3 x_axis, V3 y_axis, V3 z_axis)
 {
-				////////////////////////////////////////
-				//add your codes here for drawing a handle.
+		////////////////////////////////////////
+		//add your codes here for drawing a handle.
 
-		//point3f center_p(origin[0], origin[1], origin[2]);
-		//vect3f x_axis_vect(x_axis[0], x_axis[1], x_axis[2]);
-		//vect3f y_axis_vect(y_axis[0], y_axis[1], y_axis[2]);
-		//vect3f z_axis_vect(z_axis[0], z_axis[1], z_axis[2]);
-				
-		// PUT YOUR SOLUTION HERE	
-		glPushMatrix();
-		glBegin(GL_TRIANGLES);
+		double scale = 0.08;
+		V3 p[5] = { 
+			V3(origin.x + 2 * scale * z_axis.x,origin.y + 2 * scale * z_axis.y,origin.z + 2 * scale * z_axis.z),
+			//center + 1/2x + 1/2y
+			V3(origin.x + scale * x_axis.x ,origin.y + scale * x_axis.y ,origin.z + scale * x_axis.z),
+			//center - 1/2x + 1/2y
+			V3(origin.x - scale * x_axis.x ,origin.y - scale * x_axis.y ,origin.z - scale * x_axis.z),
+			//center - 1/2x - 1/2y
+			V3(origin.x + scale * y_axis.x ,origin.y + scale * y_axis.y ,origin.z + scale * y_axis.z),
+			//center - 1/2x + 1/2y
+			V3(origin.x - scale * y_axis.x ,origin.y - scale * y_axis.y ,origin.z - scale * y_axis.z) };
 
-		//V3 p1 = { origin[0] + (2 * x_axis)[0], origin[0] + (2 * x_axis)[0], origin[0] + (2 * x_axis)[0] }
-		// point3f p1(center_p.x_ + (2 * local_z_axis).dx_, center_p.x_ + (2 * local_z_axis).dx_, center_p.x_ + (2 * local_z_axis).dx_);
-		//point3f p2(center_p.x_ + (2 * local_z_axis).dx_, center_p.x_ + (2 * local_z_axis).dx_, center_p.x_ + (2 * local_z_axis).dx_);
-		//point3f p3(center_p.x_ + (2 * local_z_axis).dx_, center_p.x_ + (2 * local_z_axis).dx_, center_p.x_ + (2 * local_z_axis).dx_);
-		//point3f p4(center_p.x_ + (2 * local_z_axis).dx_, center_p.x_ + (2 * local_z_axis).dx_, center_p.x_ + (2 * local_z_axis).dx_);
-		//point3f p5(center_p.x_ + (2 * local_z_axis).dx_, center_p.x_ + (2 * local_z_axis).dx_, center_p.x_ + (2 * local_z_axis).dx_);
+		glBegin(GL_LINES);
 
-		glVertex3f(origin[0] + (2 * x_axis)[0], origin[0] + (2 * x_axis)[0], origin[0] + (2 * x_axis)[0]);
-		glVertex3f(origin[0] + (2 * z_axis)[0], origin[0] + (2 * z_axis)[0], origin[0] + (2 * z_axis)[0]);
-		glVertex3f(origin[0] + (2 * z_axis)[0], origin[0] + (2 * z_axis)[0], origin[0] + (2 * z_axis)[0]);
+		glColor3f(255, 255, 0); // make lines yellow
+		for (int i = 1; i <= 4; i++)
+		{
+			for (int j = i + 1; j <= 4; j++)
+			{
+				glVertex3f(p[i].x, p[i].y, p[i].z);
+				glVertex3f(p[j].x, p[j].y, p[j].z);
+			}
+			glVertex3f(p[0].x, p[0].y, p[0].z);
+			glVertex3f(p[i].x, p[i].y, p[i].z);
+		}
 
-		//glVertex3f(p1);
-		//glVertex3f(p2);
-		//glVertex3f(p5);
-
-		//glVertex3f(p1);
-		//glVertex3f(p4);
-		//glVertex3f(p5);
-
-		//glVertex3f(p1);
-		//glVertex3f(p3);
-		//glVertex3f(p4);
 		glEnd();
 
-		//glBegin(GL_QUADS);
 
-		//glVertex3f(p2);
-		//glVertex3f(p3);
-		//glVertex3f(p4);
-		//glVertex3f(p5);
-		//glEnd();
-
-		glPopMatrix();
-
-
-
-
-				////////////////////////////////////////
+		////////////////////////////////////////
 
 }
 
