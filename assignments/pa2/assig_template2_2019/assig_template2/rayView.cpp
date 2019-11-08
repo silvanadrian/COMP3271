@@ -319,20 +319,24 @@ void CRayView::UserMouseMove(int x, int y)
 				mm = m2 - m1;
 				mm.normalize();
 
-
+				// calcualte cross products
 				p1 = mm.cross(tmpv1);
 				p2 = tmpv1.cross(p1);
 				p2.normalize();
 
+				// dot product
 				dp2 = p2.dot(pDoc->m_camera.viewpoint);
+
 
 				t2 = (dp2 - p2[0] * m1[0] - p2[1] * m1[1] - p2[2] * m1[2]) / (p2[0] * mm[0] + p2[1] * mm[1] + p2[2] * mm[2]);
 				int2 = m1 + t2 * mm;
 
+				// calcualte cross products
 				p2 = mm.cross(tmpv2);
 				p1 = tmpv2.cross(p2);
 				p1.normalize();
 
+				// calcualte dot product
 				dp1 = p1.dot(pDoc->m_camera.viewpoint);
 
 
@@ -390,12 +394,15 @@ void CRayView::UserMouseMove(int x, int y)
 				mm.normalize();
 
 				p1 = mm.cross(tmpv1);
+				// calculate cross prodcuts
 				p2 = tmpv1.cross(p1);
 				p2.normalize();
 
+				// dot product
 				dp2 = p2.dot(pDoc->m_camera.viewpoint);
 
 				t2 = (dp2 - p2[0] * m1[0] - p2[1] * m1[1] - p2[2] * m1[2]) / (p2[0] * mm[0] + p2[1] * mm[1] + p2[2] * mm[2]);
+
 				int2 = m1 + t2 * mm;
 
 
@@ -411,6 +418,8 @@ void CRayView::UserMouseMove(int x, int y)
 				int1 = m1 + t1 * mm;
 
 				tmpv1 = m2 - m1 + int2 - int1;
+
+
 				dist2 = tmpv1.length();
 
 				// go through iterator and restore and multiplicate matrix
@@ -449,9 +458,11 @@ void CRayView::UserMouseMove(int x, int y)
 					}
 					(*it)->MultM(tsmat);
 					(*it)->MultM(rsmat);
+
 					tsmat[12] = (m1[0]);
 					tsmat[13] = (m1[1]);
 					tsmat[14] = (m1[2]);
+
 					(*it)->MultM(tsmat);
 				}
 
@@ -481,22 +492,22 @@ void CRayView::UserDrawControlHandle(V3 origin, V3 x_axis, V3 y_axis, V3 z_axis)
 
 		float scaling = 0.08; // scaling the handle
 		V3 points[5];
-		// set up the points with which we will draw the handles
-        points[0] = V3(origin.x + 1.5 * scaling * z_axis.x,
-                        origin.y + 1.5 * scaling * z_axis.y,
-                        origin.z + 1.5 * scaling * z_axis.z);
+		// set up the points with which we will draw the handles + use scaling for the size of the handle
+        points[0] = V3(origin.x - scaling * x_axis.x,
+                        origin.y - scaling * x_axis.y,
+                        origin.z - scaling * x_axis.z);
         points[1] = V3(origin.x + scaling * x_axis.x,
                         origin.y + scaling * x_axis.y,
                         origin.z + scaling * x_axis.z);
-        points[2] = V3(origin.x - scaling * x_axis.x, 
-					   origin.y - scaling * x_axis.y,
-                       origin.z - scaling * x_axis.z);
-        points[3] = V3(origin.x + scaling * y_axis.x, 
-					   origin.y + scaling * y_axis.y,
-                       origin.z + scaling * y_axis.z);
-        points[4] = V3(origin.x - scaling * y_axis.x, 
+        points[2] = V3(origin.x - scaling * y_axis.x, 
 					   origin.y - scaling * y_axis.y,
                        origin.z - scaling * y_axis.z);
+        points[3] = V3(origin.x + scaling * y_axis.x, 
+					   origin.y + scaling * y_axis.y,
+					   origin.z + scaling * y_axis.z);
+        points[4] = V3(origin.x + 1.5 * scaling * z_axis.x,
+                       origin.y + 1.5 * scaling * z_axis.y,
+                       origin.z + 1.5 * scaling * z_axis.z);
 
 		// start to draw the lines
 		glBegin(GL_LINES);
