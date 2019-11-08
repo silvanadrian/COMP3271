@@ -419,7 +419,6 @@ void CRayView::UserMouseMove(int x, int y)
 
 				tmpv1 = m2 - m1 + int2 - int1;
 
-
 				dist2 = tmpv1.length();
 
 				// go through iterator and restore and multiplicate matrix
