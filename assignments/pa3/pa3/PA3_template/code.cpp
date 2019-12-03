@@ -17,28 +17,29 @@ vector<CLightSource *> vLightSource;		// array of light sources
 vector<CPrimitive *> vObjects;				// array of objects
 
 
+// Calculate the color of each pixel and save it in colorMap
 void RayTracing(V3 * colorMap)
 {	
-	//add your code here
-  // visit each pixel on the screen
+  //add your code here
+  // visit each pixel
   for (int i = 0; i < winWidth - 1; i++) {
     for (int j = 0; j < winHeight - 1; j++) {
-      V3 p(ImageLL + i * (ImageLR - ImageLL) / (winWidth - 1) +
-           j * (ImageUL - ImageLL) /
-               (winHeight - 1));  // world coordinates of p
+      // Get the world coordinates of p.
+      V3 p(ImageLL + i * (ImageLR - ImageLL) / (winWidth - 1) + j * (ImageUL - ImageLL)
+		  /(winHeight - 1));
       V3 rayStart(ViewPoint);
       V3 rayDir(p - rayStart);  // fire a ray from the viewpoint through p
       V3 color;
-      Trace(rayStart, rayDir, 0,
-            color);  // trace the ray and get the color of p
+      Trace(rayStart, rayDir, 0, color);  // Call Trace() function to trace the ray and get the color of p.
       colorMap[j * winWidth + i] = color;  // save color in colorMap
     }
   }
 }
 
+// Given a ray, calculate the color at the nearest intersection point.
 void Trace(V3& rayStart, V3& rayDir, int depth, V3& color)
 {
-	//add your code here
+  //add your code here
   rayDir.normalize();
   CPrimitive* objHit;
   V3 intersection, normal;
@@ -46,29 +47,31 @@ void Trace(V3& rayStart, V3& rayDir, int depth, V3& color)
   if (Intersect(rayStart, rayDir, objHit, intersection, normal)) {
     Shade(objHit, rayStart, rayDir, intersection, normal, depth, color);
   } else {
-    color.set(0, 0, 0);  // background color
+	// Return the background color(0,0,0).
+    color.x = color.y = color.z = 0;
   }
 }
 
-// compute color at a given point
+// Given a point, calculate the color of this point.
 void Shade(CPrimitive *obj,V3& rayStart, V3& rayDir, V3& intersection, V3& normal, int depth, V3& color)
 {
-	//add your code here
+  // add your code here
   V3 ambient, diffuse, specular;
   obj->GetAmbient(intersection, ambient);
   color = ambient;  // ambient term
 
-  // diffuse and specular terms due to each light source
+  // for each light source
   for (vector<CLightSource*>::iterator itr = vLightSource.begin();
        itr != vLightSource.end(); itr++) {
-    V3 sRay((*itr)->position -
-            intersection);  // ray to light from intersection point
-    sRay.normalize();
+    // ray to light from intersection point
+    V3 sRay((*itr)->position - intersection);
+    sRay.normalize();  // normalize
     float cosTheta = normal.dot(sRay);
     if (cosTheta > 0) {
-      V3 dummyI, dummyN;  // dummy intersection point and normal vector
-      if (!Intersect(intersection, sRay, obj, dummyI,
-                     dummyN)) {  // see whether sRay is blocked
+      // temp intersection point and normal vector
+      V3 tempInter, tempNvec;
+      if (!Intersect(intersection, sRay, obj, tempInter, tempNvec)) {
+		// see whether sRay is blocked
         obj->GetDiffuse(intersection, diffuse);
         obj->GetSpecular(intersection, specular);
         V3 R(2 * cosTheta * normal - sRay);  // direction of reflection
@@ -76,13 +79,15 @@ void Shade(CPrimitive *obj,V3& rayStart, V3& rayDir, V3& intersection, V3& norma
         V.normalize();
         float cosPhi = R.dot(V);
 
-        // color += Diffuse and specular terms due to each light source
+        // color + diffuse
         color.x += (*itr)->color.x * (obj->m_Opacity * diffuse.x * cosTheta +
                                       obj->m_Reflectance * specular.x *
                                           pow(cosPhi, obj->m_Shininess));
+
         color.y += (*itr)->color.y * (obj->m_Opacity * diffuse.y * cosTheta +
                                       obj->m_Reflectance * specular.y *
                                           pow(cosPhi, obj->m_Shininess));
+
         color.z += (*itr)->color.z * (obj->m_Opacity * diffuse.z * cosTheta +
                                       obj->m_Reflectance * specular.z *
                                           pow(cosPhi, obj->m_Shininess));
@@ -104,14 +109,15 @@ void Shade(CPrimitive *obj,V3& rayStart, V3& rayDir, V3& intersection, V3& norma
   }
 
   // clamp color to 1.0
-  color.x = min(color.x, 1.0);
-  color.y = min(color.y, 1.0);
-  color.z = min(color.z, 1.0);
+  if (color.x > 1.0) color.x = 1.0;
+  if (color.y > 1.0) color.y = 1.0;
+  if (color.z > 1.0) color.z = 1.0;
 }
 
+// Perform intersection between a ray and a quadratic surface.
 bool IntersectQuadratic(V3 rayStart,V3 rayDir, float * coeffMatrix,float& t, V3& intersection)
 {		
-	//add your code here
+  // add your code here
   // R(t) = S + Dt;
   float S[] = {rayStart[0], rayStart[1], rayStart[2], 1};
   float D[] = {rayDir[0], rayDir[1], rayDir[2], 0};
@@ -129,8 +135,8 @@ bool IntersectQuadratic(V3 rayStart,V3 rayDir, float * coeffMatrix,float& t, V3&
     return false;
   }
   // R(t) = S + Dt, t>=0
-  float t0 = (-b + sqrt(delta)) / (2 * a);
-  float t1 = (-b - sqrt(delta)) / (2 * a);
+  float t0 = (-b + sqrt(delta)) / (2 * (double)a);
+  float t1 = (-b - sqrt(delta)) / (2 * (double)a);
   if (t0 < 0 && t1 < 0) {
     return false;
   } else if (t0 >= 0 && t1 >= 0) {
@@ -141,9 +147,11 @@ bool IntersectQuadratic(V3 rayStart,V3 rayDir, float * coeffMatrix,float& t, V3&
   intersection = rayStart + t * rayDir;
   return true;
 }
+
+// Perform intersection between a ray and a triangle.
 bool  IntersectTriangle(V3 rayStart,V3 rayDir, V3 v0, V3 v1,V3 v2, float& t,V3& intersection)
 {	
-	//add your code here
+  // add your code here
   V3 normal((v1 - v0).cross(v2 - v0));
   if (normal.dot(rayDir) != 0) {
     // Check whether the intersection point is inside the triangle
