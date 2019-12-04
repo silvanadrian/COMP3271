@@ -56,9 +56,9 @@ void Trace(V3& rayStart, V3& rayDir, int depth, V3& color)
 void Shade(CPrimitive *obj,V3& rayStart, V3& rayDir, V3& intersection, V3& normal, int depth, V3& color)
 {
   // add your code here
-  V3 ambient, diffuse, specular;
-  obj->GetAmbient(intersection, ambient);
-  color = ambient;  // ambient term
+  V3 color_ambient, color_diffuse, color_specular;
+  obj->GetAmbient(intersection, color_ambient);
+  color = color_ambient;  // ambient term
 
   // for each light source
   for (vector<CLightSource*>::iterator itr = vLightSource.begin();
@@ -72,24 +72,24 @@ void Shade(CPrimitive *obj,V3& rayStart, V3& rayDir, V3& intersection, V3& norma
       V3 tempInter, tempNvec;
       if (!Intersect(intersection, sRay, obj, tempInter, tempNvec)) {
 		// see whether sRay is blocked
-        obj->GetDiffuse(intersection, diffuse);
-        obj->GetSpecular(intersection, specular);
+        obj->GetDiffuse(intersection, color_diffuse);
+        obj->GetSpecular(intersection, color_specular);
         V3 R(2 * cosTheta * normal - sRay);  // direction of reflection
         V3 V(rayStart - intersection);       // direction to viewpoint
         V.normalize();
         float cosPhi = R.dot(V);
 
         // color + diffuse
-        color.x += (*itr)->color.x * (obj->m_Opacity * diffuse.x * cosTheta +
-                                      obj->m_Reflectance * specular.x *
+        color.x += (*itr)->color.x * (obj->m_Opacity * color_diffuse.x * cosTheta +
+                                      obj->m_Reflectance * color_specular.x *
                                           pow(cosPhi, obj->m_Shininess));
 
-        color.y += (*itr)->color.y * (obj->m_Opacity * diffuse.y * cosTheta +
-                                      obj->m_Reflectance * specular.y *
+        color.y += (*itr)->color.y * (obj->m_Opacity * color_diffuse.y * cosTheta +
+                                      obj->m_Reflectance * color_specular.y *
                                           pow(cosPhi, obj->m_Shininess));
 
-        color.z += (*itr)->color.z * (obj->m_Opacity * diffuse.z * cosTheta +
-                                      obj->m_Reflectance * specular.z *
+        color.z += (*itr)->color.z * (obj->m_Opacity * color_diffuse.z * cosTheta +
+                                      obj->m_Reflectance * color_specular.z *
                                           pow(cosPhi, obj->m_Shininess));
       }
     }
@@ -129,21 +129,19 @@ bool IntersectQuadratic(V3 rayStart,V3 rayDir, float * coeffMatrix,float& t, V3&
   VectorMultMatrix(S, coeffMatrix, temp);
   b = 2 * VectorMultVector(temp, D);  // b = S^T A D
   c = VectorMultVector(temp, S);      // c = S^T A S
-  float delta = b * b - 4 * a * c;    // determinant of the equation
+  float delta = b * b - 4 * a * c;    // determine closest t
 
-  if (delta < 0) {
-    return false;
-  }
-  // R(t) = S + Dt, t>=0
-  float t0 = (-b + sqrt(delta)) / (2 * (double)a);
-  float t1 = (-b - sqrt(delta)) / (2 * (double)a);
-  if (t0 < 0 && t1 < 0) {
-    return false;
-  } else if (t0 >= 0 && t1 >= 0) {
-    t = min(t0, t1);
+  if (delta > 0) {
+    float t0 = (-b + sqrt(delta)) / (2 * a);
+	float t1 = (-b - sqrt(delta)) / (2 * a);
+    t = t0 > t1 ? t1 : t0;
+  } else if (delta == 0) {
+    t = -b / (2 * a);
   } else {
-    t = max(t0, t1);
+    return false;
   }
+
+  // set intersection
   intersection = rayStart + t * rayDir;
   return true;
 }
@@ -152,17 +150,20 @@ bool IntersectQuadratic(V3 rayStart,V3 rayDir, float * coeffMatrix,float& t, V3&
 bool  IntersectTriangle(V3 rayStart,V3 rayDir, V3 v0, V3 v1,V3 v2, float& t,V3& intersection)
 {	
   // add your code here
-  V3 normal((v1 - v0).cross(v2 - v0));
-  if (normal.dot(rayDir) != 0) {
-    // Check whether the intersection point is inside the triangle
-    // the equation of the plane is NX = d
-    // =>	N*(rayStart + t*rayDir) = N*v0
-    float temp = (normal.dot(v0) - normal.dot(rayStart)) / (normal.dot(rayDir));
-    V3 C(rayStart + temp * rayDir);
-    V3 cp0(v0 - C), cp1(v1 - C), cp2(v2 - C);
-    V3 cross0(cp0.cross(cp1)), cross1(cp1.cross(cp2)), cross2(cp2.cross(cp0));
-    if (cross0.dot(cross1) > 0 && cross1.dot(cross2) > 0 &&
-        cross2.dot(cross0) > 0) {
+  // plane is NX = d;
+  V3 N((v1 - v0).cross(v2 - v0));
+  float d = N.dot(v0); 
+  if (N.dot(rayDir) != 0) {
+    // N(rayStart + t * rayDir) = d
+    float val_t = (d - N.dot(rayStart)) / (N.dot(rayDir));
+    V3 C(rayStart + val_t * rayDir);
+    V3 cp_0(v0 - C), cp_1(v1 - C), cp_2(v2 - C);
+	// Compute cross product in the following sequence.
+    // cross(CP0, CP1), cross(CP1, CP2), cross(CP2, CP0)
+    V3 cross_0(cp_0.cross(cp_1)), cross_1(cp_1.cross(cp_2)), cross_2(cp_2.cross(cp_0));
+    // Check if the intersection point is inside the triangle
+    if (cross_0.dot(cross_1) > 0 && cross_1.dot(cross_2) > 0 &&
+        cross_2.dot(cross_0) > 0) {
       intersection = C;
       return true;
     }
